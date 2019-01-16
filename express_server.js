@@ -39,7 +39,6 @@ app.post("/urls", (request, response) => {
     let newURL = request.body.longURL;  //grab the long link from the user
     response.send(`Ok, we will provide a shortlink that will redirect to ${newURL}`);
     urlDatabase[getRandomString()] = newURL;
-    console.log(urlDatabase);
   });
 
 app.get("/urls.json", (request, response) => {
