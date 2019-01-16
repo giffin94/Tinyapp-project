@@ -46,6 +46,11 @@ app.get("/urls.json", (request, response) => {
     response.json(urlDatabase);
 });
 
+app.get('/u/:shortURL', (request, response) => {
+    let longURL = urlDatabase[request.params.shortURL];
+    response.redirect(longURL);
+});
+
 app.get('/urls/:id', (request, response) => {
 
     let shortLinks = { 
