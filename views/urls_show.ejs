@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>TinyApp - Your URLs</title>
+    <h1><%= greeting %></h1>
+</head>
+
+<header>
+    <% include ./partials/_header %>
+</header>
+
+<body>
+    <%= `${shortURL}, ${fullURL[shortURL]}` %>
+</body>
+
+</html>

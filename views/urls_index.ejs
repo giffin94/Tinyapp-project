@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+
+<header>
+<% include ./partials/_header %>
+</header>
+
+<body>
+    <h1><b>YOUR URLS</b></h1>
+    <ul>
+    <% for(var url in urls) { %>
+        <li><%= url + ' ' + urls[url]%></li>
+    <% } %>
+    </ul>
+    <h3><a href='/shorten'> SHORTEN A NEW LINK!</a></h3>
+</body>
+
+</html>
