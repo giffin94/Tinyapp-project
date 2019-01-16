@@ -9,7 +9,13 @@
     <h1><b>YOUR URLS</b></h1>
     <ul>
     <% for(var url in urls) { %>
-        <li><%= url + ' ' + urls[url]%></li>
+        <li>
+            <p>Short URL: <a href=<%= `urls/${url}` %>><%= url + ' '%></a>Full URL: <a href=<%= `${urls[url]}` %>><%= urls[url] %></a> (Click URL code to update)
+                <form action="/urls/<%= url %>/delete" method="post">
+                    <button>Delete Link</button>
+                </form>
+            </p>
+        </li>
     <% } %>
     </ul>
     <h3><a href='/urls/new'> SHORTEN A NEW LINK!</a></h3>

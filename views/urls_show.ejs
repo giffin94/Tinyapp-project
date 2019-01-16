@@ -7,11 +7,19 @@
 </head>
 
 <header>
-    <h1><%= greeting %></h1>
+    <h1><b><%= `${greeting} ${shortURL}` %></b></h1>
 </header>
 
 <body>
-    <%= `www.${shortURL}.com ===> ${fullURL[shortURL]}` %>
+    <p>
+        <form action="/urls/<%= shortURL %>/update" method="post">
+            <input id="newURL" type="text" value="<%= fullURL[shortURL] %>" name="longURL"> 
+
+            <button>Update URL!</button>                    
+        </form>
+    </p>
+
+    <h3><a href='/urls/new'> SHORTEN A NEW LINK!</a></h3>
 </body>
 
 </html>

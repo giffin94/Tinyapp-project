@@ -14,15 +14,11 @@ const urlDatabase = { //an object containing specified urls
     "9sm5xK": "http://www.google.com"
 };
 
-app.get("/hello", (request, response) => {
-    response.send("<html><body>Hello <b>World</b></body></html>\n");
-});
-
 app.get("/", (request, response) => {
-    response.send("Hello!");
-});
+    response.send("Hello!"); //should render an HTML
+});//Make this a homepage!!!
 
-app.get('/urls', function (request, response) {
+app.get('/urls/', function (request, response) {
     let userLinks = {
         urls: urlDatabase,
         greeting: "These are your shortened URLS!",
@@ -37,30 +33,50 @@ app.get('/urls/new', function (request, response) {
 
 app.post("/urls", (request, response) => {
     let newURL = request.body.longURL;  //grab the long link from the user
-    response.send(`Ok, we will provide a shortlink that will redirect to ${newURL}`);
+    response.redirect('/urls');
     urlDatabase[getRandomString()] = newURL;
   });
+
+app.get('/urls/:id', (request, response) => {
+
+    let shortLinks = {
+        shortURL: request.params.id,
+        greeting: 'ShortURL: ',
+        fullURL: urlDatabase,
+        PORT: PORT,
+    };
+
+    response.render("urls_show", shortLinks);
+});
+
+app.post("/urls/:id/delete", (request, response) => {
+    let id = request.params.id;
+    delete urlDatabase[id];
+    response.redirect('/urls');
+});
+
+app.post("/urls/:id/update", (request, response) => {
+    let id = request.params.id;
+    urlDatabase[id] = request.body['longURL'];
+    response.redirect(`/urls`);
+    // response.redirect(`/urls/${id}`);
+});
 
 app.get("/urls.json", (request, response) => {
     response.json(urlDatabase);
 });
 
 app.get('/u/:shortURL', (request, response) => {
-    let longURL = urlDatabase[request.params.shortURL];
-    response.redirect(longURL);
+    const longURL = urlDatabase[request.params.shortURL];
+    response.redirect(`/${longURL}`);
 });
 
-app.get('/urls/:id', (request, response) => {
-
-    let shortLinks = {
-        shortURL: request.params.id,
-        greeting: 'Your shortURL redirect: ',
-        fullURL: urlDatabase
-    };
-    response.render("urls_show", shortLinks);
+app.get("/:url", (request, response) => {
+    let hyperLink = request.params.url;
+    response.redirect(`http://${hyperLink}`);
 });
 
 app.listen(PORT, () => {
-    console.log(`Example app listening on port ${PORT}!`);
+    console.log(`Tinyapp listening on port ${PORT}!`);
 });
 
