@@ -67,9 +67,12 @@ app.get("/urls.json", (request, response) => {
 
 app.get('/u/:shortURL', (request, response) => {
     const longURL = urlDatabase[request.params.shortURL];
-    let niceLink = longURL.replace("http://www.", '');
+    let niceLink = longURL.replace('http://', '');
+    niceLink = niceLink.replace('www.', '');
     response.redirect(`http://www.${niceLink}`);
 });
+
+
 
 
 app.listen(PORT, () => {
