@@ -55,7 +55,7 @@ app.get('/urls/:id', (request, response) => {
 
     let shortLinks = { 
         shortURL: request.params.id,
-        greeting: 'Is this the right spot?',
+        greeting: 'Your shortURL redirect: ',
         fullURL: urlDatabase
     };
     response.render("urls_show", shortLinks);

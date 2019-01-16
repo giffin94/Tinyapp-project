@@ -3,15 +3,15 @@
 
 <head>
     <title>TinyApp - Your URLs</title>
-    <h1><%= greeting %></h1>
+    <% include ./partials/_header %>
 </head>
 
 <header>
-    <% include ./partials/_header %>
+    <h1><%= greeting %></h1>
 </header>
 
 <body>
-    <%= `${shortURL}, ${fullURL[shortURL]}` %>
+    <%= `www.${shortURL}.com ===> ${fullURL[shortURL]}` %>
 </body>
 
 </html>
