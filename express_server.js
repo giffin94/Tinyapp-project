@@ -59,7 +59,6 @@ app.post("/urls/:id/update", (request, response) => {
     let id = request.params.id;
     urlDatabase[id] = request.body['longURL'];
     response.redirect(`/urls`);
-    // response.redirect(`/urls/${id}`);
 });
 
 app.get("/urls.json", (request, response) => {
@@ -68,13 +67,10 @@ app.get("/urls.json", (request, response) => {
 
 app.get('/u/:shortURL', (request, response) => {
     const longURL = urlDatabase[request.params.shortURL];
-    response.redirect(`/${longURL}`);
+    let niceLink = longURL.replace("http://www.", '');
+    response.redirect(`http://www.${niceLink}`);
 });
 
-app.get("/:url", (request, response) => {
-    let hyperLink = request.params.url;
-    response.redirect(`http://${hyperLink}`);
-});
 
 app.listen(PORT, () => {
     console.log(`Tinyapp listening on port ${PORT}!`);
