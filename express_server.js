@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const PORT = 8000;
+const getRandomString = require('./generate_codes.js');
 
 const bodyParser = require("body-parser");
 
@@ -8,7 +9,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 app.set('view engine', 'ejs');
 
-var urlDatabase = { //an object containing specified urls
+const urlDatabase = { //an object containing specified urls
     "b2xVn2": "http://www.lighthouselabs.ca",
     "9sm5xK": "http://www.google.com"
 };
@@ -34,6 +35,13 @@ app.get('/urls/new', function (request, response) {
     response.render('urls_new');
 });
 
+app.post("/urls", (request, response) => {
+    let newURL = request.body.longURL;  //grab the long link from the user
+    response.send(`Ok, we will provide a shortlink that will redirect to ${newURL}`);
+    urlDatabase[getRandomString()] = newURL;
+    console.log(urlDatabase);
+  });
+
 app.get("/urls.json", (request, response) => {
     response.json(urlDatabase);
 });
@@ -51,3 +59,4 @@ app.get('/urls/:id', (request, response) => {
 app.listen(PORT, () => {
     console.log(`Example app listening on port ${PORT}!`);
 });
+
