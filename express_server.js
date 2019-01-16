@@ -2,6 +2,10 @@ const express = require('express');
 const app = express();
 const PORT = 8000;
 
+const bodyParser = require("body-parser");
+
+app.use(bodyParser.urlencoded({extended: true}));
+
 app.set('view engine', 'ejs');
 
 var urlDatabase = { //an object containing specified urls
@@ -26,6 +30,14 @@ app.get('/urls', function (request, response) {
     response.render('urls_index', userLinks);
 });
 
+app.get('/urls/new', function (request, response) {
+    response.render('urls_new');
+});
+
+app.get("/urls.json", (request, response) => {
+    response.json(urlDatabase);
+});
+
 app.get('/urls/:id', (request, response) => {
 
     let shortLinks = { 
@@ -34,10 +46,6 @@ app.get('/urls/:id', (request, response) => {
         fullURL: urlDatabase
     };
     response.render("urls_show", shortLinks);
-});
-
-app.get("/urls.json", (request, response) => {
-    response.json(urlDatabase);
 });
 
 app.listen(PORT, () => {
