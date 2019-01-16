@@ -53,7 +53,7 @@ app.get('/u/:shortURL', (request, response) => {
 
 app.get('/urls/:id', (request, response) => {
 
-    let shortLinks = { 
+    let shortLinks = {
         shortURL: request.params.id,
         greeting: 'Your shortURL redirect: ',
         fullURL: urlDatabase
