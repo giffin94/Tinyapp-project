@@ -10,9 +10,12 @@
     <ul>
     <% for(var url in urls) { %>
         <li>
-            <p>Short URL: <a href=<%= `urls/${url}` %>><%= url + ' '%></a>Full URL: <a href=<%= `${urls[url]}` %>><%= urls[url] %></a> (Click URL code to update)
+            <p>Short URL: ><%= url + ' '%>Full URL: <a href=<%= `${urls[url]}` %>><%= urls[url] %></a> (Click URL code to update)
                 <form action="/urls/<%= url %>/delete" method="post">
                     <button>Delete Link</button>
+                </form>
+                <form action='/urls/<%= url %>' method="get"'>
+                    <button>Edit</button>
                 </form>
             </p>
         </li>
