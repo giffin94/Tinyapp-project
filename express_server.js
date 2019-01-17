@@ -5,6 +5,7 @@ const getRandomString = require('./generate_codes.js');
 const appData = require('./data-storage');
 const urlDatabase = appData.urlDatabase;
 const userInfo = appData.users;
+const handler = require('./handler');
 
 
 const bodyParser = require("body-parser");
@@ -38,29 +39,31 @@ app.get('/register', function (request, response) {
 app.post('/register', function (request, response) {
     const userEmail = request.body.email;
     const userPassword = request.body.password;
-    if(userEmail) {
-        if(userPassword) {
-            for(var user in userInfo) {
-                if(userInfo[user]['email'] === userEmail) {
-                    console.log("Email already registered! Error: 400");//splash an error page!
-                    process.exit();
-                }
-            }
+    handler.registration(userEmail, userPassword, userInfo, response);
 
-            let userID = getRandomString();
-            userInfo[userID] = {
-                id: userID,
-                email: userEmail,
-                password: userPassword,
-            }
-            response.cookie('user_id', userID);
-            response.redirect('/urls');
-        } else {
-            console.log('missing password, Error: 400');//ideally we render a nice HTML error page
-        }
-    } else {
-        console.log('missing email address, Error: 400');//ideally we render a nice HTML error page
-    }
+    // if(userEmail) {
+    //     if(userPassword) {
+    //         for(var user in userInfo) {
+    //             if(userInfo[user]['email'] === userEmail) {
+    //                 console.log("Email already registered! Error: 400");//splash an error page!
+    //                 process.exit();
+    //             }
+    //         }
+
+    //         let userID = getRandomString();
+    //         userInfo[userID] = {
+    //             id: userID,
+    //             email: userEmail,
+    //             password: userPassword,
+    //         }
+    //         response.cookie('user_id', userID);
+    //         response.redirect('/urls');
+    //     } else {
+    //         console.log('missing password, Error: 400');//ideally we render a nice HTML error page
+    //     }
+    // } else {
+    //     console.log('missing email address, Error: 400');//ideally we render a nice HTML error page
+    // }
 });
 
 app.post('/login', function(request, response) {
