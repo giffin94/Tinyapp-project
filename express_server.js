@@ -2,6 +2,10 @@ const express = require('express');
 const app = express();
 const PORT = 8000;
 const getRandomString = require('./generate_codes.js');
+const appData = require('./data-storage');
+const urlDatabase = appData.urlDatabase;
+const userInfo = appData.users;
+
 
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
@@ -11,10 +15,7 @@ app.use(cookieParser());
 
 app.set('view engine', 'ejs');
 
-const urlDatabase = { //an object containing specified urls
-    "b2xVn2": "http://www.lighthouselabs.ca",
-    "9sm5xK": "http://www.google.com"
-};
+
 
 app.get("/", (request, response) => {
     response.send("Hello!"); //should render an HTML
@@ -34,6 +35,35 @@ app.get('/register', function (request, response) {
     response.render('user_registration');
 });
 
+app.post('/register', function (request, response) {
+    const userEmail = request.body.email;
+    const userPassword = request.body.password;
+    if(userEmail) {
+        if(userPassword) {
+            // for(var user of userInfo) {
+            //     if(user.email === userEmail) {
+            //         console.log("Email already registered! Error: 400");
+            //         process.exit();
+            //     }
+            // }
+
+            let userID = getRandomString();
+            userInfo[userID] = {
+                id: userID,
+                email: userEmail,
+                password: userPassword,
+            }
+            console.log(userInfo);
+            response.cookie('user_id', userID);
+            response.redirect('/urls');
+        } else {
+            console.log('missing password, Error: 400');//ideally we render a nice HTML error page
+        }
+    } else {
+        console.log('missing email address, Error: 400');//ideally we render a nice HTML error page
+    }
+});
+
 app.post('/login', function(request, response) {
     const userName = request.body.username;
     response.cookie('username',`${userName}`);
@@ -41,6 +71,8 @@ app.post('/login', function(request, response) {
 });
 
 app.post('/logout', function(request, response) {
+    response.clearCookie('password');
+    response.clearCookie('email');
     response.clearCookie('username');
     response.redirect('/urls');
 });
