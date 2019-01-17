@@ -4,8 +4,10 @@ const PORT = 8000;
 const getRandomString = require('./generate_codes.js');
 
 const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
 
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(cookieParser());
 
 app.set('view engine', 'ejs');
 
@@ -25,6 +27,12 @@ app.get('/urls/', function (request, response) {
         port: PORT
     };
     response.render('urls_index', userLinks);
+});
+
+app.post('/login', function(request, response) {
+    const userName = request.body.username;
+    response.cookie('username',`${userName}`);
+    response.redirect('/urls');
 });
 
 app.get('/urls/new', function (request, response) {
