@@ -30,6 +30,10 @@ app.get('/urls', function (request, response) {
     response.render('urls_index', userLinks);
 });
 
+app.get('/register', function (request, response) {
+    response.render('user_registration');
+});
+
 app.post('/login', function(request, response) {
     const userName = request.body.username;
     response.cookie('username',`${userName}`);
