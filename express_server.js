@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const PORT = 8000;
+const PORT = 5155;
 const getRandomString = require('./generate_codes.js');
 const appData = require('./data-storage');
 const urlDatabase = appData.urlDatabase;
@@ -23,13 +23,11 @@ app.get("/", (request, response) => {
 });//Make this a homepage!!!
 
 app.get('/urls', function (request, response) {
-    let userLinks = {
-        urls: urlDatabase,
-        greeting: "These are your shortened URLS!",
-        port: PORT,
-        username: request.cookies.username,
+    const currentUser = {
+        ourUser: userInfo[request.cookies.user_id],
+        urls: appData.urlDatabase
     };
-    response.render('urls_index', userLinks);
+    response.render('urls_index', currentUser);
 });
 
 app.get('/register', function (request, response) {
@@ -39,70 +37,54 @@ app.get('/register', function (request, response) {
 app.post('/register', function (request, response) {
     const userEmail = request.body.email;
     const userPassword = request.body.password;
-    handler.registration(userEmail, userPassword, userInfo, response);
-
-    // if(userEmail) {
-    //     if(userPassword) {
-    //         for(var user in userInfo) {
-    //             if(userInfo[user]['email'] === userEmail) {
-    //                 console.log("Email already registered! Error: 400");//splash an error page!
-    //                 process.exit();
-    //             }
-    //         }
-
-    //         let userID = getRandomString();
-    //         userInfo[userID] = {
-    //             id: userID,
-    //             email: userEmail,
-    //             password: userPassword,
-    //         }
-    //         response.cookie('user_id', userID);
-    //         response.redirect('/urls');
-    //     } else {
-    //         console.log('missing password, Error: 400');//ideally we render a nice HTML error page
-    //     }
-    // } else {
-    //     console.log('missing email address, Error: 400');//ideally we render a nice HTML error page
-    // }
+    handler.registration(userEmail, userPassword, response);
 });
 
-app.post('/login', function(request, response) {
-    const userName = request.body.username;
-    response.cookie('username',`${userName}`);
-    response.redirect('/urls');
+app.get('/login', function (request, response) {
+    response.render('login');
 });
 
-app.post('/logout', function(request, response) {
-    response.clearCookie('password');
-    response.clearCookie('email');
-    response.clearCookie('username');
-    response.redirect('/urls');
+app.post('/login', function (request, response) {
+    const userEmail = request.body.email;
+    const userPassword = request.body.password
+    handler.login(userEmail, userPassword, response);
+    const currentUser = {
+        ourUser: userInfo[request.cookies.user_id],
+        urls: appData.urlDatabase
+    };
+    response.render('urls_index', currentUser);
+});
+
+app.post('/logout', function (request, response) {
+    response.clearCookie('user_id');
+    response.redirect('/login');
 });
 
 app.get('/urls/new', function (request, response) {
-    const userName = {
-        username: request.cookies.username,
+    const currentUser = {
+        ourUser: userInfo[request.cookies.user_id],
+        urls: appData.urlDatabase,
     };
-    response.render('urls_new', userName);
+
+    response.render('urls_new', currentUser);
 });
 
 app.post("/urls", (request, response) => {
     let newURL = request.body.longURL;  //grab the long link from the user
-    response.redirect('/urls');
     urlDatabase[getRandomString()] = newURL;
-  });
+    response.redirect('/urls');
+});
 
 app.get('/urls/:id', (request, response) => {
 
-    let shortLinks = {
+    const currentUser = {
+        ourUser: userInfo[request.cookies.user_id],
+        urls: appData.urlDatabase,
         shortURL: request.params.id,
-        greeting: 'ShortURL: ',
-        fullURL: urlDatabase,
-        PORT: PORT,
-        username: request.cookies.username,
+        greeting: "Your short URL:"
     };
 
-    response.render("urls_show", shortLinks);
+    response.render("urls_show", currentUser);
 });
 
 app.post("/urls/:id/delete", (request, response) => {
@@ -113,7 +95,7 @@ app.post("/urls/:id/delete", (request, response) => {
 
 app.post("/urls/:id/update", (request, response) => {
     let id = request.params.id;
-    urlDatabase[id] = request.body['longURL'];
+    urlDatabase[id] = request.body.longURL;
     response.redirect(`/urls`);
 });
 
@@ -123,9 +105,7 @@ app.get("/urls.json", (request, response) => {
 
 app.get('/u/:shortURL', (request, response) => {
     const longURL = urlDatabase[request.params.shortURL];
-    let niceLink = longURL.replace('http://', ''); //these lines help us avoid any troubles with users inputting less than perfect links
-    niceLink = niceLink.replace('www.', '');
-    response.redirect(`http://www.${niceLink}`);
+    response.redirect(`http://www.${handler.userLink(longURL)}`);
 });
 
 
