@@ -1,7 +1,12 @@
 const express = require('express');
 const app = express();
-const PORT = 8000;
+const PORT = 5155;
 const getRandomString = require('./generate_codes.js');
+const appData = require('./data-storage');
+const urlDatabase = appData.urlDatabase;
+const userInfo = appData.users;
+const handler = require('./handler');
+
 
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
@@ -11,60 +16,75 @@ app.use(cookieParser());
 
 app.set('view engine', 'ejs');
 
-const urlDatabase = { //an object containing specified urls
-    "b2xVn2": "http://www.lighthouselabs.ca",
-    "9sm5xK": "http://www.google.com"
-};
+
 
 app.get("/", (request, response) => {
     response.send("Hello!"); //should render an HTML
 });//Make this a homepage!!!
 
 app.get('/urls', function (request, response) {
-    let userLinks = {
-        urls: urlDatabase,
-        greeting: "These are your shortened URLS!",
-        port: PORT,
-        username: request.cookies.username,
+    const currentUser = {
+        ourUser: userInfo[request.cookies.user_id],
+        urls: appData.urlDatabase
     };
-    response.render('urls_index', userLinks);
+    response.render('urls_index', currentUser);
 });
 
-app.post('/login', function(request, response) {
-    const userName = request.body.username;
-    response.cookie('username',`${userName}`);
-    response.redirect('/urls');
+app.get('/register', function (request, response) {
+    response.render('user_registration');
 });
 
-app.post('/logout', function(request, response) {
-    response.clearCookie('username');
-    response.redirect('/urls');
+app.post('/register', function (request, response) {
+    const userEmail = request.body.email;
+    const userPassword = request.body.password;
+    handler.registration(userEmail, userPassword, response);
+});
+
+app.get('/login', function (request, response) {
+    response.render('login');
+});
+
+app.post('/login', function (request, response) {
+    const userEmail = request.body.email;
+    const userPassword = request.body.password
+    handler.login(userEmail, userPassword, response);
+    const currentUser = {
+        ourUser: userInfo[request.cookies.user_id],
+        urls: appData.urlDatabase
+    };
+    response.render('urls_index', currentUser);
+});
+
+app.post('/logout', function (request, response) {
+    response.clearCookie('user_id');
+    response.redirect('/login');
 });
 
 app.get('/urls/new', function (request, response) {
-    const userName = {
-        username: request.cookies.username,
+    const currentUser = {
+        ourUser: userInfo[request.cookies.user_id],
+        urls: appData.urlDatabase,
     };
-    response.render('urls_new', userName);
+
+    response.render('urls_new', currentUser);
 });
 
 app.post("/urls", (request, response) => {
     let newURL = request.body.longURL;  //grab the long link from the user
-    response.redirect('/urls');
     urlDatabase[getRandomString()] = newURL;
-  });
+    response.redirect('/urls');
+});
 
 app.get('/urls/:id', (request, response) => {
 
-    let shortLinks = {
+    const currentUser = {
+        ourUser: userInfo[request.cookies.user_id],
+        urls: appData.urlDatabase,
         shortURL: request.params.id,
-        greeting: 'ShortURL: ',
-        fullURL: urlDatabase,
-        PORT: PORT,
-        username: request.cookies.username,
+        greeting: "Your short URL:"
     };
 
-    response.render("urls_show", shortLinks);
+    response.render("urls_show", currentUser);
 });
 
 app.post("/urls/:id/delete", (request, response) => {
@@ -75,7 +95,7 @@ app.post("/urls/:id/delete", (request, response) => {
 
 app.post("/urls/:id/update", (request, response) => {
     let id = request.params.id;
-    urlDatabase[id] = request.body['longURL'];
+    urlDatabase[id] = request.body.longURL;
     response.redirect(`/urls`);
 });
 
@@ -85,9 +105,7 @@ app.get("/urls.json", (request, response) => {
 
 app.get('/u/:shortURL', (request, response) => {
     const longURL = urlDatabase[request.params.shortURL];
-    let niceLink = longURL.replace('http://', '');
-    niceLink = niceLink.replace('www.', '');
-    response.redirect(`http://www.${niceLink}`);
+    response.redirect(`http://www.${handler.userLink(longURL)}`);
 });
 
 

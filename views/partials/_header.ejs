@@ -4,19 +4,18 @@
     <head>
         <title>TinyApp - Shorten your URLS!!!</title>
         <h1>Welcome to TinyApp.</h1>
-        <% if(username) { %>
-            <p>Logged in as: <%= username %>
-                <form action="/logout" method="post">
-                    <button>Logout</button>                    
-                </form>
-            </p>
-        <% } else { %> 
-            <form action="/login" method="post">
-                <label for="username">Username: </label>
-                <input id="username" type="text" value="" name="username"> 
-
-                <button>Submit</button>                    
-            </form>
-        <% } %>
+        <% if(ourUser) { %>       
+            <% if(ourUser.id) { %>
+                <p>Logged in as: <%= ourUser.email %>
+                    <form action="/logout" method="post">
+                        <button>Logout</button>                    
+                    </form>
+                </p>
+            <% } 
+            
+            } else { %> 
+                <a href='/register'>Register here! </a> <br>
+                <a href='/login'>Existing user login here! </a>
+            <% } %> 
     </head> 
 </html>
