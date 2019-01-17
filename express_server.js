@@ -40,12 +40,12 @@ app.post('/register', function (request, response) {
     const userPassword = request.body.password;
     if(userEmail) {
         if(userPassword) {
-            // for(var user of userInfo) {
-            //     if(user.email === userEmail) {
-            //         console.log("Email already registered! Error: 400");
-            //         process.exit();
-            //     }
-            // }
+            for(var user in userInfo) {
+                if(userInfo[user]['email'] === userEmail) {
+                    console.log("Email already registered! Error: 400");//splash an error page!
+                    process.exit();
+                }
+            }
 
             let userID = getRandomString();
             userInfo[userID] = {
@@ -53,7 +53,6 @@ app.post('/register', function (request, response) {
                 email: userEmail,
                 password: userPassword,
             }
-            console.log(userInfo);
             response.cookie('user_id', userID);
             response.redirect('/urls');
         } else {
