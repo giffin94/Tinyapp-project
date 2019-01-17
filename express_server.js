@@ -4,8 +4,10 @@ const PORT = 8000;
 const getRandomString = require('./generate_codes.js');
 
 const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
 
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(cookieParser());
 
 app.set('view engine', 'ejs');
 
@@ -18,17 +20,32 @@ app.get("/", (request, response) => {
     response.send("Hello!"); //should render an HTML
 });//Make this a homepage!!!
 
-app.get('/urls/', function (request, response) {
+app.get('/urls', function (request, response) {
     let userLinks = {
         urls: urlDatabase,
         greeting: "These are your shortened URLS!",
-        port: PORT
+        port: PORT,
+        username: request.cookies.username,
     };
     response.render('urls_index', userLinks);
 });
 
+app.post('/login', function(request, response) {
+    const userName = request.body.username;
+    response.cookie('username',`${userName}`);
+    response.redirect('/urls');
+});
+
+app.post('/logout', function(request, response) {
+    response.clearCookie('username');
+    response.redirect('/urls');
+});
+
 app.get('/urls/new', function (request, response) {
-    response.render('urls_new');
+    const userName = {
+        username: request.cookies.username,
+    };
+    response.render('urls_new', userName);
 });
 
 app.post("/urls", (request, response) => {
@@ -44,6 +61,7 @@ app.get('/urls/:id', (request, response) => {
         greeting: 'ShortURL: ',
         fullURL: urlDatabase,
         PORT: PORT,
+        username: request.cookies.username,
     };
 
     response.render("urls_show", shortLinks);

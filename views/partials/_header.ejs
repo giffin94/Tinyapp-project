@@ -4,5 +4,19 @@
     <head>
         <title>TinyApp - Shorten your URLS!!!</title>
         <h1>Welcome to TinyApp.</h1>
+        <% if(username) { %>
+            <p>Logged in as: <%= username %>
+                <form action="/logout" method="post">
+                    <button>Logout</button>                    
+                </form>
+            </p>
+        <% } else { %> 
+            <form action="/login" method="post">
+                <label for="username">Username: </label>
+                <input id="username" type="text" value="" name="username"> 
+
+                <button>Submit</button>                    
+            </form>
+        <% } %>
     </head> 
 </html>
