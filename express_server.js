@@ -120,7 +120,7 @@ app.get("/urls.json", (request, response) => {
 
 app.get('/u/:shortURL', (request, response) => {
     const longURL = urlDatabase[request.params.shortURL];
-    let niceLink = longURL.replace('http://', '');
+    let niceLink = longURL.replace('http://', ''); //these lines help us avoid any troubles with users inputting less than perfect links
     niceLink = niceLink.replace('www.', '');
     response.redirect(`http://www.${niceLink}`);
 });
