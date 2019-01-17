@@ -20,11 +20,12 @@ app.get("/", (request, response) => {
     response.send("Hello!"); //should render an HTML
 });//Make this a homepage!!!
 
-app.get('/urls/', function (request, response) {
+app.get('/urls', function (request, response) {
     let userLinks = {
         urls: urlDatabase,
         greeting: "These are your shortened URLS!",
-        port: PORT
+        port: PORT,
+        username: request.cookies.username,
     };
     response.render('urls_index', userLinks);
 });
@@ -35,8 +36,16 @@ app.post('/login', function(request, response) {
     response.redirect('/urls');
 });
 
+app.post('/logout', function(request, response) {
+    response.clearCookie('username');
+    response.redirect('/urls');
+});
+
 app.get('/urls/new', function (request, response) {
-    response.render('urls_new');
+    const userName = {
+        username: request.cookies.username,
+    };
+    response.render('urls_new', userName);
 });
 
 app.post("/urls", (request, response) => {
@@ -52,6 +61,7 @@ app.get('/urls/:id', (request, response) => {
         greeting: 'ShortURL: ',
         fullURL: urlDatabase,
         PORT: PORT,
+        username: request.cookies.username,
     };
 
     response.render("urls_show", shortLinks);
