@@ -21,7 +21,11 @@ app.set('view engine', 'ejs');
 
 
 app.get("/", (request, response) => {
-    response.send("Hello!"); //should render an HTML
+    if (userInfo[request.session.user_id]) {
+        response.redirect('/urls'); //should render an HTML
+    } else {
+        response.redirect('/login');
+    };
 });//Make this a homepage!!!
 
 app.get('/urls', function (request, response) {
@@ -52,11 +56,6 @@ app.post('/login', function (request, response) {
     const userEmail = request.body.email;
     const userPassword = request.body.password
     handler.login(userEmail, userPassword, request, response);
-    const currentUser = {
-        ourUser: userInfo[request.session.user_id],
-        urls: appData.urlDatabase
-    };
-    response.render('urls_index', currentUser);
 });
 
 app.post('/logout', function (request, response) {

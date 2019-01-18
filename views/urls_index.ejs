@@ -12,7 +12,7 @@
             <% var thisLink = (urls[url].replace('http://', '')); %>
             <% thisLink = (thisLink.replace('www.', '')) %>
             <li>
-                <p>Short URL: <%= url + ' '%>Full URL: <a href=<%= `https://www.${thisLink}` %>><%= urls[url] %></a> (Click URL code to update)
+                <p>Short URL: <%= url + ' '%>Full URL: <a href=<%= `https://www.${thisLink}` %>><%= urls[url] %></a>
                     <form action="/urls/<%= url %>/delete" method="post">
                         <button>Delete Link</button>
                     </form>
