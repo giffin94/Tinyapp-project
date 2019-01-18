@@ -13,7 +13,7 @@
 <body>
     <p>
         <form action="/urls/<%= shortURL %>/update" method="post">
-            <input id="newURL" type="text" value="<%= urls[shortURL] %>" name="longURL"> 
+            <input id="newURL" type="text" value="<%= urls[shortURL].link %>" name="longURL"> 
 
             <button>Update URL!</button>                    
         </form>

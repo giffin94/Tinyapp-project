@@ -1,21 +1,27 @@
 const appData = {
     users: {
-        "userRandomID": {
-            id: "userRandomID",
+        "99999": {
+            id: "99999",
             email: "user@example.com",
-            password: "purple-monkey-dinosaur"
+            password: "12345"
         },
-        "user2RandomID": {
-            id: "user2RandomID",
+        "88888": {
+            id: "88888",
             email: "user2@example.com",
-            password: "dishwasher-funk"
+            password: "12345"
         }
     },
 
     urlDatabase: {
-        "b2xVn2": "http://www.lighthouselabs.ca",
-        "9sm5xK": "http://www.google.com"
-    }
+        "b2xVn2": { 
+            link: "http://www.lighthouselabs.ca",
+            userID: '99999'
+        },
+        "9sm5xK": {
+            link: "http://www.google.com",
+            userID: '99999'
+        },
+    },
 };
 
 module.exports = appData;

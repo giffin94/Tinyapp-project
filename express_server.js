@@ -23,10 +23,11 @@ app.get("/", (request, response) => {
 });//Make this a homepage!!!
 
 app.get('/urls', function (request, response) {
-    const currentUser = {
+    let currentUser = {
         ourUser: userInfo[request.cookies.user_id],
-        urls: appData.urlDatabase
+        urls: handler.urlsForUser(String(request.cookies.user_id)),
     };
+    console.log(currentUser);
     response.render('urls_index', currentUser);
 });
 
@@ -57,46 +58,71 @@ app.post('/login', function (request, response) {
 
 app.post('/logout', function (request, response) {
     response.clearCookie('user_id');
-    response.redirect('/login');
+    response.render('login');
 });
 
 app.get('/urls/new', function (request, response) {
-    const currentUser = {
-        ourUser: userInfo[request.cookies.user_id],
-        urls: appData.urlDatabase,
-    };
+    if(request.cookies.user_id){
+        const currentUser = {
+            ourUser: userInfo[request.cookies.user_id],
+            urls: appData.urlDatabase,
+        };
 
-    response.render('urls_new', currentUser);
+        response.render('urls_new', currentUser);
+    } else {
+        response.render('login');
+    }
 });
 
 app.post("/urls", (request, response) => {
     let newURL = request.body.longURL;  //grab the long link from the user
-    urlDatabase[getRandomString()] = newURL;
+    let shortOne = getRandomString();
+    urlDatabase[shortOne].link = newURL;
+    urlDatabase[shortOne].userID = request.cookies.user_id;
     response.redirect('/urls');
 });
 
 app.get('/urls/:id', (request, response) => {
+    if(request.cookies.user_id){
+        const currentUser = {
+            ourUser: userInfo[request.cookies.user_id],
+            urls: appData.urlDatabase,
+            shortURL: request.params.id,
+            greeting: "Your short URL:"
+        };
+        console.log(currentUser);
 
-    const currentUser = {
-        ourUser: userInfo[request.cookies.user_id],
-        urls: appData.urlDatabase,
-        shortURL: request.params.id,
-        greeting: "Your short URL:"
-    };
-
-    response.render("urls_show", currentUser);
+        response.render("urls_show", currentUser);
+    } else {
+        response.render('login');
+    }
 });
 
 app.post("/urls/:id/delete", (request, response) => {
-    let id = request.params.id;
-    delete urlDatabase[id];
-    response.redirect('/urls');
+    if(urlDatabase[request.params.id].userID === request.cookies.user_id) {
+        let id = request.params.id;
+        delete urlDatabase[id];
+        response.redirect('/urls');
+    } else {
+        response.send("<p>Hey! You can't delete links that aren't yours.</p>");
+    }
 });
 
 app.post("/urls/:id/update", (request, response) => {
-    let id = request.params.id;
-    urlDatabase[id] = request.body.longURL;
-    response.redirect(`/urls`);
+    if(urlDatabase[request.params.id].userID === request.cookies.user_id){
+        const currentUser = {
+            ourUser: userInfo[request.cookies.user_id],
+            urls: appData.urlDatabase,
+            shortURL: request.params.id,
+            greeting: "Your short URL:"
+        };
+
+        urlDatabase[currentUser.shortURL].link = request.body.longURL;
+        urlDatabase[currentUser.shortURL].userID = currentUser.ourUser.id;
+        response.redirect(`/urls`);
+    } else {
+        response.send("<p>Sorry! This Link is not yours to edit.</p>");
+    };
 });
 
 app.get("/urls.json", (request, response) => {
@@ -104,7 +130,7 @@ app.get("/urls.json", (request, response) => {
 });
 
 app.get('/u/:shortURL', (request, response) => {
-    const longURL = urlDatabase[request.params.shortURL];
+    const longURL = urlDatabase[request.params.shortURL].link;
     response.redirect(`http://www.${handler.userLink(longURL)}`);
 });
 

@@ -9,8 +9,8 @@
     <h1><b>YOUR URLS</b></h1>
     <ul>
     <% for(var url in urls) { %>
-        <% var thisLink = urls[url].replace('http://', ''); %>
-        <% thisLink = thisLink.replace('www.', '') %>
+        <% var thisLink = (urls[url].replace('http://', '')); %>
+        <% thisLink = (thisLink.replace('www.', '')) %>
         <li>
             <p>Short URL: <%= url + ' '%>Full URL: <a href=<%= `https://www.${thisLink}` %>><%= urls[url] %></a> (Click URL code to update)
                 <form action="/urls/<%= url %>/delete" method="post">
