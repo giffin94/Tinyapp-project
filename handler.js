@@ -5,7 +5,7 @@ const urlDatabase = appData.urlDatabase;
 const bcrypt = require('bcrypt');
 
 const handler = {
-    registration: function(userEmail, userPassword, response) {
+    registration: function(userEmail, userPassword, request, response) {
         if(userEmail) {
             if(userPassword) {
                 for(var user in userInfo) {
@@ -20,7 +20,7 @@ const handler = {
                                     email: userEmail,
                                     password: bcrypt.hashSync(userPassword, 10),
                                     };
-                response.cookie('user_id', userID);
+                request.session.user_id = userID;
                 response.redirect('/urls');
             } else {
                 response.send('missing password, Error: 400');//ideally we render a nice HTML error page
@@ -29,7 +29,7 @@ const handler = {
             response.send('missing email address, Error: 400');//ideally we render a nice HTML error page
         };
     },
-    login: function(userEmail, userPassword, response) {
+    login: function(userEmail, userPassword, request, response) {
         if(userEmail) {
             if(userPassword) {
                 let foundEmail = false;
@@ -39,7 +39,7 @@ const handler = {
                         foundEmail = true;
                         if(bcrypt.compareSync(userPassword, userInfo[user].password)) {
                             foundPassword = true;
-                            response.cookie('user_id', userInfo[user].id);
+                            request.session.user_id = user;
                         };
                     };
                 };
