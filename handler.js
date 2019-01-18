@@ -6,57 +6,51 @@ const bcrypt = require('bcrypt');
 
 const handler = {
     registration: function(userEmail, userPassword, request, response) {
-        if(userEmail) {
-            if(userPassword) {
-                for(var user in userInfo) {
-                    if(userInfo[user]['email'] === userEmail) {
-                        response.send("<p>Email already registered! Error: 400</p>");//splash an error page!
-                    }
-                };
-                let userID = getRandomString();
-                userInfo[userID] = {
-                                    id: userID,
-                                    email: userEmail,
-                                    password: bcrypt.hashSync(userPassword, 10),
-                                    };
-                request.session.user_id = userID;
-                response.redirect('/urls');
-            } else {
-                response.send('<p>missing password, Error: 400</p>');//ideally we render a nice HTML error page
-            };
-        } else {
-            response.send('<p>missing email address, Error: 400</p>');//ideally we render a nice HTML error page
+        checkThis.emailEntered(userEmail, function(response){
+            response.send("No Email found!! <a href='/login'>Try Again<a>");
+        }, response);
+        checkThis.passwordEntered(userPassword, response);
+        for(var user in userInfo) {
+            if(userInfo[user]['email'] === userEmail) {
+                response.send("<p>Email already registered! Error: 400</p>");//splash an error page!
+            }
         };
+        let userID = getRandomString();
+        userInfo[userID] = {
+                            id: userID,
+                            email: userEmail,
+                            password: bcrypt.hashSync(userPassword, 10),
+                            };
+        request.session.user_id = userID;
+        response.redirect('/urls');
+
     },
     login: function(userEmail, userPassword, request, response) {
        checkThis.emailEntered(userEmail, function(response){
            response.send("No Email found!! <a href='/login'>Try Again<a>");
        }, response);
        checkThis.passwordEntered(userPassword, response);
-        // let userExists = false;
         let foundEmail = false;
-                let foundPassword = false;
-                for(var user in userInfo) {
-                    // userExists = checkThis.userCredentials(userEmail, bcrypt.compareSync(userPassword, userInfo[user].password, [user], userInfo[user].email));
-                    if(userInfo[user].email === userEmail) {
-                        foundEmail = true;
-                        if(bcrypt.compareSync(userPassword, userInfo[user].password)) {
-                            foundPassword = true;
-                            request.session.user_id = user;
-                        };
-                    };
+        let foundPassword = false;
+        for(var user in userInfo) {
+            if(userInfo[user].email === userEmail) {
+                foundEmail = true;
+                if(bcrypt.compareSync(userPassword, userInfo[user].password)) {
+                    foundPassword = true;
+                    request.session.user_id = user;
                 };
-                // if (userExists) { response.send("YAY")};
-                // checkThis.userFound(userExists, passWordGood);
-                if (foundEmail) {
-                    if (foundPassword) {
-                        response.redirect('/');
-                    } else {
-                        response.send("Incorrect password! <a href='/login'>Try Again<a>");
-                    };
-                } else {
-                    response.send("<p>No user associated with that email address!</p><a href='/login'>Try Again<a><br><a href=/register>Register Here.</a>");
-                };
+            };
+        };
+
+        if (foundEmail) {
+            if (foundPassword) {
+                response.redirect('/');
+            } else {
+                response.send("Incorrect password! <a href='/login'>Try Again<a>");
+            };
+        } else {
+            response.send("<p>No user associated with that email address!</p><a href='/login'>Try Again<a><br><a href=/register>Register Here.</a>");
+        };
     },
     userLink: function (url) { //this function handles likely differences in the user input - expects at least domain.com (assumes http)
         let niceLink = url.replace('http://', '');
