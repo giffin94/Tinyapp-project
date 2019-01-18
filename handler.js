@@ -1,6 +1,7 @@
 const getRandomString = require('./generate_codes');
 const appData = require('./data-storage');
 const userInfo = appData.users;
+const urlDatabase = appData.urlDatabase;
 
 const handler = {
     registration: function(userEmail, userPassword, response) {
@@ -45,20 +46,16 @@ const handler = {
                     if (foundPassword) {
                         response.redirect('/');
                     } else {
-                        console.log("Incorrect password!");
-                        response.redirect('back');
+                        response.send("Incorrect password! <a href='/login'>Try Again<a>");
                     };
                 } else {
-                    console.log("Email not registered!");
-                    response.redirect('/register');
+                    response.send("<p>Email not registered!</p><br><a href=/register>Register Here.</a>");
                 };
             } else {
-                console.log('missing password, Error: 400');//ideally we render a nice HTML error page
-                response.redirect('back');
+                response.send('missing password, Error: 400');//ideally we render a nice HTML error page
             };
         } else {
-            console.log('missing email address, Error: 400');//ideally we render a nice HTML error page
-            response.redirect('back');
+            response.send('missing email address, Error: 400');//ideally we render a nice HTML error page
         };
     },
     userLink: function (url) {
@@ -66,6 +63,15 @@ const handler = {
         niceLink = niceLink.replace('www.', '');
         return(niceLink);
     },
+    urlsForUser: function(id) {
+        let personalLinks = {};
+            for(const url in urlDatabase) {
+                if(urlDatabase[url].userID === id) {
+                    personalLinks[url] = urlDatabase[url].link;
+                };
+            };
+        return personalLinks;
+    }
 };
 
 module.exports = handler;
