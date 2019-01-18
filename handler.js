@@ -10,8 +10,7 @@ const handler = {
             if(userPassword) {
                 for(var user in userInfo) {
                     if(userInfo[user]['email'] === userEmail) {
-                        console.log("Email already registered! Error: 400");//splash an error page!
-                        process.exit();
+                        response.send("<p>Email already registered! Error: 400</p>");//splash an error page!
                     }
                 };
                 let userID = getRandomString();
@@ -23,10 +22,10 @@ const handler = {
                 request.session.user_id = userID;
                 response.redirect('/urls');
             } else {
-                response.send('missing password, Error: 400');//ideally we render a nice HTML error page
+                response.send('<p>missing password, Error: 400</p>');//ideally we render a nice HTML error page
             };
         } else {
-            response.send('missing email address, Error: 400');//ideally we render a nice HTML error page
+            response.send('<p>missing email address, Error: 400</p>');//ideally we render a nice HTML error page
         };
     },
     login: function(userEmail, userPassword, request, response) {
@@ -50,7 +49,7 @@ const handler = {
                         response.send("Incorrect password! <a href='/login'>Try Again<a>");
                     };
                 } else {
-                    response.send("<p>Email not registered!</p><br><a href=/register>Register Here.</a>");
+                    response.send("<p>No user associated with that email address!</p><a href='/login'>Try Again<a><br><a href=/register>Register Here.</a>");
                 };
             } else {
                 response.send('missing password, Error: 400');//ideally we render a nice HTML error page
