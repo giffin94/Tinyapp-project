@@ -6,10 +6,10 @@ const bcrypt = require('bcrypt');
 
 const handler = {
     registration: function(userEmail, userPassword, request, response) {
-        checkThis.emailEntered(userEmail, function(response){
-            response.send("No Email found!! <a href='/login'>Try Again<a>");
+        this.checkThis.emailEntered(userEmail, function(response){
+            response.send("No Email Entered!! <a href='/login'>Try Again<a>");
         }, response);
-        checkThis.passwordEntered(userPassword, response);
+        this.checkThis.passwordEntered(userPassword, response);
         for(var user in userInfo) {
             if(userInfo[user]['email'] === userEmail) {
                 response.send("<p>Email already registered! Error: 400</p>");//splash an error page!
@@ -26,10 +26,10 @@ const handler = {
 
     },
     login: function(userEmail, userPassword, request, response) {
-       checkThis.emailEntered(userEmail, function(response){
+       this.checkThis.emailEntered(userEmail, function(response){
            response.send("No Email found!! <a href='/login'>Try Again<a>");
        }, response);
-       checkThis.passwordEntered(userPassword, response);
+       this.checkThis.passwordEntered(userPassword, response);
         let foundEmail = false;
         let foundPassword = false;
         for(var user in userInfo) {
@@ -65,22 +65,56 @@ const handler = {
                 };
             };
         return personalLinks;
-    }
-};
-
-const checkThis = {
-    emailEntered: function(credential, errorMessage, response) {
-        if(credential){
-            return;
-        } else {
-            errorMessage(response);
-        }
     },
-    passwordEntered: function(userPassword, response) {
-        this.emailEntered(userPassword, function(response){
-            response.send("No password entered");
+    checkThis: {
+      emailEntered: function(credential, errorMessage, response) {
+          if(credential){
+              return;
+          } else {
+              errorMessage(response);
+          }
+      },
+      passwordEntered: function(userPassword, response) {
+          this.emailEntered(userPassword, function(response){
+              response.send("No password entered");
+          }, response);
+      },
+      userActive: function(request, response) {
+        this.emailEntered(userInfo[request.session.user_id], function(response) {
+          response.send("You aren't logged in yet! Please login here:</p><a href='/login'>Login<a><br><a href=/register>Register Here.</a>")
+        }, response);
+      },
+      linkOwner: function(request, response) {
+        this.emailEntered((urlDatabase[request.params.id].userID === request.session.user_id), function(response) {
+          response.send(`You don't own this link! You can still use it though: <a href=${urlDatabase[request.params.id].link}>${request.params.id}</a>`)
+        }, response);
+      },
+      linkExists: function(request, response) {
+        this.emailEntered(urlDatabase[request.params.id], function(response) {
+          response.send('Uh oh! No Link associated with that ID.')
+        }, response);
+      },
+      userActiveReg: function(request, response) {
+        this.emailEntered(!(userInfo[request.session.user_id]), function(response) {
+          response.redirect('/urls');
         }, response);
     },
+  },
+};
+
+// const checkThis = {
+//     emailEntered: function(credential, errorMessage, response) {
+//         if(credential){
+//             return;
+//         } else {
+//             errorMessage(response);
+//         }
+//     },
+//     passwordEntered: function(userPassword, response) {
+//         this.emailEntered(userPassword, function(response){
+//             response.send("No password entered");
+//         }, response);
+//     },
     // userCredentials: function(anEmail, passwordHash, user, indexedEmail) {
     //     if(indexedEmail === anEmail) {
     //             if(passwordHash) {
@@ -98,6 +132,6 @@ const checkThis = {
 
     //     }
     // }
-};
+// };
 
 module.exports = handler;

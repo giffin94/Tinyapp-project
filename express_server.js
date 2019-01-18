@@ -6,6 +6,7 @@ const appData = require('./data-storage');
 const urlDatabase = appData.urlDatabase;
 const userInfo = appData.users;
 const handler = require('./handler');
+const checkThis = handler.checkThis;
 const bodyParser = require("body-parser");
 const cookieSession = require("cookie-session");
 
@@ -29,16 +30,17 @@ app.get("/", (request, response) => {
 });//Make this a homepage!!!
 
 app.get('/urls', function (request, response) {
+    checkThis.userActive(request, response);
     let currentUser = {
         ourUser: userInfo[request.session.user_id],
         urls: handler.urlsForUser(String(request.session.user_id)),
     };
-    console.log(currentUser);
     response.render('urls_index', currentUser);
 });
 
 app.get('/register', function (request, response) {
-    response.render('user_registration');
+  checkThis.userActiveReg(request, response);  
+  response.render('user_registration');
 });
 
 app.post('/register', function (request, response) {
@@ -85,46 +87,45 @@ app.post("/urls", (request, response) => {
 });
 
 app.get('/urls/:id', (request, response) => {
-    if(request.session.user_id){
+  checkThis.userActive(request, response);
+  checkThis.linkExists(request, response);
+  checkThis.linkOwner(request, response);
         const currentUser = {
             ourUser: userInfo[request.session.user_id],
             urls: appData.urlDatabase,
             shortURL: request.params.id,
             greeting: "Your short URL:"
         };
-        console.log(currentUser);
-
         response.render("urls_show", currentUser);
-    } else {
-        response.render('login');
-    }
 });
 
 app.post("/urls/:id/delete", (request, response) => {
-    if(urlDatabase[request.params.id].userID === request.session.user_id) {
+  checkThis.userActive(request, response);
+  checkThis.linkOwner(request, response); 
+  // if(urlDatabase[request.params.id].userID === request.session.user_id) {
         let id = request.params.id;
         delete urlDatabase[id];
         response.redirect('/urls');
-    } else {
-        response.send("<p>Hey! You can't delete links that aren't yours.</p>");
-    }
+    // } else {
+    //     response.send("<p>Hey! You can't delete links that aren't yours.</p>");
+    // }
 });
 
 app.post("/urls/:id/update", (request, response) => {
-    if(urlDatabase[request.params.id].userID === request.session.user_id){
-        const currentUser = {
-            ourUser: userInfo[request.session.user_id],
-            urls: appData.urlDatabase,
-            shortURL: request.params.id,
-            greeting: "Your short URL:"
-        };
+  if(urlDatabase[request.params.id].userID === request.session.user_id){
+      const currentUser = {
+          ourUser: userInfo[request.session.user_id],
+          urls: appData.urlDatabase,
+          shortURL: request.params.id,
+          greeting: "Your short URL:"
+      };
 
-        urlDatabase[currentUser.shortURL].link = request.body.longURL;
-        urlDatabase[currentUser.shortURL].userID = currentUser.ourUser.id;
-        response.redirect(`/urls`);
-    } else {
-        response.send("<p>Sorry! This Link is not yours to edit.</p>");
-    };
+      urlDatabase[currentUser.shortURL].link = request.body.longURL;
+      urlDatabase[currentUser.shortURL].userID = currentUser.ourUser.id;
+      response.redirect(`/urls`);
+  } else {
+      response.send("<p>Sorry! This Link is not yours to edit.</p>");
+  };
 });
 
 app.get("/urls.json", (request, response) => {
@@ -132,6 +133,7 @@ app.get("/urls.json", (request, response) => {
 });
 
 app.get('/u/:shortURL', (request, response) => {
+    checkThis.linkExists(request, response);
     const longURL = urlDatabase[request.params.shortURL].link;
     response.redirect(`http://www.${handler.userLink(longURL)}`);
 });
