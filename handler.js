@@ -2,6 +2,7 @@ const getRandomString = require('./generate_codes');
 const appData = require('./data-storage');
 const userInfo = appData.users;
 const urlDatabase = appData.urlDatabase;
+const bcrypt = require('bcrypt');
 
 const handler = {
     registration: function(userEmail, userPassword, response) {
@@ -17,7 +18,7 @@ const handler = {
                 userInfo[userID] = {
                                     id: userID,
                                     email: userEmail,
-                                    password: userPassword,
+                                    password: bcrypt.hashSync(userPassword, 10),
                                     };
                 response.cookie('user_id', userID);
                 response.redirect('/urls');
@@ -36,7 +37,7 @@ const handler = {
                 for(var user in userInfo) {
                     if(userInfo[user].email === userEmail) {
                         foundEmail = true;
-                        if(userInfo[user].password === userPassword) {
+                        if(bcrypt.compareSync(userPassword, userInfo[user].password)) {
                             foundPassword = true;
                             response.cookie('user_id', userInfo[user].id);
                         };

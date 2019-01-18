@@ -69,7 +69,7 @@ app.get('/urls/new', function (request, response) {
 
         response.render('urls_new', currentUser);
     } else {
-        response.render('login');
+        response.redirect('login');
     }
 });
 
