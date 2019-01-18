@@ -74,11 +74,11 @@ app.get('/urls/new', function (request, response) {
 });
 
 app.post("/urls", (request, response) => {
-    let newURL = request.body.longURL;  //grab the long link from the user
-    let shortOne = getRandomString();
-    urlDatabase[shortOne].link = newURL;
-    urlDatabase[shortOne].userID = request.cookies.user_id;
-    response.redirect('/urls');
+    urlDatabase[getRandomString()] = {
+        link: request.body.longURL,
+        userID: request.cookies.user_id,
+    };
+    response.redirect(`/urls`)
 });
 
 app.get('/urls/:id', (request, response) => {

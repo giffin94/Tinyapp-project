@@ -22,10 +22,10 @@ const handler = {
                 response.cookie('user_id', userID);
                 response.redirect('/urls');
             } else {
-                console.log('missing password, Error: 400');//ideally we render a nice HTML error page
+                response.send('missing password, Error: 400');//ideally we render a nice HTML error page
             };
         } else {
-            console.log('missing email address, Error: 400');//ideally we render a nice HTML error page
+            response.send('missing email address, Error: 400');//ideally we render a nice HTML error page
         };
     },
     login: function(userEmail, userPassword, response) {
