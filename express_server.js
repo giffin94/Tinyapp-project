@@ -6,8 +6,6 @@ const appData = require('./data-storage');
 const urlDatabase = appData.urlDatabase;
 const userInfo = appData.users;
 const handler = require('./handler');
-
-
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 
@@ -38,6 +36,7 @@ app.get('/register', function (request, response) {
 app.post('/register', function (request, response) {
     const userEmail = request.body.email;
     const userPassword = request.body.password;
+
     handler.registration(userEmail, userPassword, response);
 });
 
