@@ -29,13 +29,15 @@ const handler = {
         };
     },
     login: function(userEmail, userPassword, request, response) {
-       checkthis.emailEntered(userEmail, function(response){
-           response.send("Incorrect password! <a href='/login'>Try Again<a>");
-       });
-       checkthis.passwordEntered(userPassword);
-                let foundEmail = false;
+       checkThis.emailEntered(userEmail, function(response){
+           response.send("No Email found!! <a href='/login'>Try Again<a>");
+       }, response);
+       checkThis.passwordEntered(userPassword, response);
+        // let userExists = false;
+        let foundEmail = false;
                 let foundPassword = false;
                 for(var user in userInfo) {
+                    // userExists = checkThis.userCredentials(userEmail, bcrypt.compareSync(userPassword, userInfo[user].password, [user], userInfo[user].email));
                     if(userInfo[user].email === userEmail) {
                         foundEmail = true;
                         if(bcrypt.compareSync(userPassword, userInfo[user].password)) {
@@ -44,6 +46,8 @@ const handler = {
                         };
                     };
                 };
+                // if (userExists) { response.send("YAY")};
+                // checkThis.userFound(userExists, passWordGood);
                 if (foundEmail) {
                     if (foundPassword) {
                         response.redirect('/');
@@ -70,19 +74,36 @@ const handler = {
     }
 };
 
-const errors = {
-
-}
-
-const checkthis = {
-    emailEntered: function(credential, errorMessage) {
+const checkThis = {
+    emailEntered: function(credential, errorMessage, response) {
         if(credential){
             return;
         } else {
-            errorMessage();
+            errorMessage(response);
         }
     },
-    passwordEntered: function(password) { this.emailEntered(password, errorMessage) },
+    passwordEntered: function(userPassword, response) {
+        this.emailEntered(userPassword, function(response){
+            response.send("No password entered");
+        }, response);
+    },
+    // userCredentials: function(anEmail, passwordHash, user, indexedEmail) {
+    //     if(indexedEmail === anEmail) {
+    //             if(passwordHash) {
+    //                 request.session.user_id = user;
+    //                 return true;
+    //             } else {
+    //                 return false;
+    //             }
+    //         } else {
+    //             return false;
+    //         }
+    // },
+    // userFound: function (userExists) {
+    //     if(userExists) {
+
+    //     }
+    // }
 };
 
 module.exports = handler;
