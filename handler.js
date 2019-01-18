@@ -5,37 +5,37 @@ const urlDatabase = appData.urlDatabase;
 const bcrypt = require('bcrypt');
 
 const handler = {
-    registration: function(userEmail, userPassword, request, response) {
-        this.checkThis.emailEntered(userEmail, function(response){
+    registration: function(request, response) {
+        this.checkThis.emailEntered(request.body.email, function(response){
             response.send("No Email Entered!! <a href='/login'>Try Again<a>");
         }, response);
-        this.checkThis.passwordEntered(userPassword, response);
+        this.checkThis.passwordEntered(request.body.password, response);
         for(var user in userInfo) {
-            if(userInfo[user]['email'] === userEmail) {
+            if(userInfo[user]['email'] === request.body.email) {
                 response.send("<p>Email already registered! Error: 400</p>");//splash an error page!
             }
         };
         let userID = getRandomString();
         userInfo[userID] = {
                             id: userID,
-                            email: userEmail,
-                            password: bcrypt.hashSync(userPassword, 10),
+                            email: request.body.email,
+                            password: bcrypt.hashSync(request.body.password, 10),
                             };
         request.session.user_id = userID;
         response.redirect('/urls');
 
     },
-    login: function(userEmail, userPassword, request, response) {
-       this.checkThis.emailEntered(userEmail, function(response){
-           response.send("No Email found!! <a href='/login'>Try Again<a>");
+    login: function(request, response) {
+       this.checkThis.emailEntered(request.body.email, function(response){
+          response.send("No Email found!! <a href='/login'>Try Again<a>");
        }, response);
-       this.checkThis.passwordEntered(userPassword, response);
+       this.checkThis.passwordEntered(request.body.password, response);
         let foundEmail = false;
         let foundPassword = false;
         for(var user in userInfo) {
-            if(userInfo[user].email === userEmail) {
+            if(userInfo[user].email === request.body.email) {
                 foundEmail = true;
-                if(bcrypt.compareSync(userPassword, userInfo[user].password)) {
+                if(bcrypt.compareSync(request.body.password, userInfo[user].password)) {
                     foundPassword = true;
                     request.session.user_id = user;
                 };
