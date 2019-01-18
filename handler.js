@@ -13,15 +13,7 @@ const handler = {
       for(var user in userInfo) {
         this.checkThis.emailRegistered(userInfo[user]['email'], request, response);
       };
-      let userID = getRandomString();
-      userInfo[userID] = {
-        id: userID,
-        email: request.body.email,
-        password: bcrypt.hashSync(request.body.password, 10),
-      };
-      request.session.user_id = userID;
-      response.redirect('/urls');
-
+      this.registerUser(request, response, bcrypt.hashSync(request.body.password, 10));
   },
   login: function(request, response) {
     this.checkThis.emailEntered(request.body.email, function(response){
@@ -29,27 +21,13 @@ const handler = {
     }, response);
     this.checkThis.passwordEntered(request.body.password, response);
     var foundEmail = false;
-    var foundPassword = false;
     for(var user in userInfo) {
       foundEmail = this.checkThis.userFound(userInfo[user].email, foundEmail, request.body.email);
       if(foundEmail) {
         foundPassword = this.checkThis.passwordFound(userInfo[user].password, user, request, response);
       };
-      // if(bcrypt.compareSync(request.body.password, userInfo[user].password)) {
-      //         foundPassword = true;
-      //         request.session.user_id = user;
-      //     };
     };
-
-    // if (foundEmail) {
-    //   if (foundPassword) {
-    //       response.redirect('/');
-    //   } else {
-    //     response.send("Incorrect password! <a href='/login'>Try Again<a>");
-    //   };
-    // } else {
-    //   response.send("<p>No user associated with that email address!</p><a href='/login'>Try Again<a><br><a href=/register>Register Here.</a>");
-    // };
+    response.send('No Email found!')
   },
   userLink: function (url) { //this function handles likely differences in the user input - expects at least domain.com (assumes http)
     let niceLink = url.replace('http://', '');
@@ -103,7 +81,7 @@ const handler = {
         response.send("<p>Email already registered! Error: 400</p>");
       }, response);
     },
-    userFound: function(info, reqEmail, found){
+    userFound: function(info, found, reqEmail){
       if(info === reqEmail) {
         return true;
       } else {
@@ -115,10 +93,20 @@ const handler = {
         request.session.user_id = user;
         response.redirect('/');
       } else {
-        response.send("Sorry incorrect password");
+        response.send("Sorry incorrect password, try again");
       }
     }
   },
+  registerUser: function(request, response, hashPass) {
+    let userID = getRandomString();
+    userInfo[userID] = {
+      id: userID,
+      email: request.body.email,
+      password: hashPass,
+    };
+    request.session.user_id = userID;
+    response.redirect('/urls');
+  }
 };
 
 module.exports = handler;
