@@ -32,8 +32,7 @@ const handler = {
        checkthis.emailEntered(userEmail, function(response){
            response.send("Incorrect password! <a href='/login'>Try Again<a>");
        });
-        // if(userEmail) {
-            if(userPassword) {
+       checkthis.passwordEntered(userPassword);
                 let foundEmail = false;
                 let foundPassword = false;
                 for(var user in userInfo) {
@@ -54,15 +53,9 @@ const handler = {
                 } else {
                     response.send("<p>No user associated with that email address!</p><a href='/login'>Try Again<a><br><a href=/register>Register Here.</a>");
                 };
-            } else {
-                response.send('missing password, Error: 400');//ideally we render a nice HTML error page
-            };
-        // } else {
-        //     response.send('missing email address, Error: 400');//ideally we render a nice HTML error page
-        // };
     },
-    userLink: function (url) {
-        let niceLink = url.replace('http://', ''); //these lines help us avoid any troubles with users inputting less than perfect links
+    userLink: function (url) { //this function handles likely differences in the user input - expects at least domain.com (assumes http)
+        let niceLink = url.replace('http://', '');
         niceLink = niceLink.replace('www.', '');
         return(niceLink);
     },
@@ -89,8 +82,7 @@ const checkthis = {
             errorMessage();
         }
     },
-    // userNameEntered: this.emailEntered(userEmail, errorMessage)
-
+    passwordEntered: function(password) { this.emailEntered(password, errorMessage) },
 };
 
 module.exports = handler;
