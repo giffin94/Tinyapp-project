@@ -27,7 +27,7 @@ const handler = {
         foundPassword = this.checkThis.passwordFound(userInfo[user].password, user, request, response);
       };
     };
-    response.send('No Email found!')
+    response.send('That Email not registered!')
   },
   userLink: function (url) { //this function handles likely differences in the user input - expects at least domain.com (assumes http)
     let niceLink = url.replace('http://', '');
