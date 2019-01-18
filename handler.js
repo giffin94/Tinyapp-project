@@ -2,6 +2,7 @@ const getRandomString = require('./generate_codes');
 const appData = require('./data-storage');
 const userInfo = appData.users;
 const urlDatabase = appData.urlDatabase;
+const bcrypt = require('bcrypt');
 
 const handler = {
     registration: function(userEmail, userPassword, response) {
@@ -17,15 +18,15 @@ const handler = {
                 userInfo[userID] = {
                                     id: userID,
                                     email: userEmail,
-                                    password: userPassword,
+                                    password: bcrypt.hashSync(userPassword, 10),
                                     };
                 response.cookie('user_id', userID);
                 response.redirect('/urls');
             } else {
-                console.log('missing password, Error: 400');//ideally we render a nice HTML error page
+                response.send('missing password, Error: 400');//ideally we render a nice HTML error page
             };
         } else {
-            console.log('missing email address, Error: 400');//ideally we render a nice HTML error page
+            response.send('missing email address, Error: 400');//ideally we render a nice HTML error page
         };
     },
     login: function(userEmail, userPassword, response) {
@@ -36,7 +37,7 @@ const handler = {
                 for(var user in userInfo) {
                     if(userInfo[user].email === userEmail) {
                         foundEmail = true;
-                        if(userInfo[user].password === userPassword) {
+                        if(bcrypt.compareSync(userPassword, userInfo[user].password)) {
                             foundPassword = true;
                             response.cookie('user_id', userInfo[user].id);
                         };
