@@ -29,7 +29,10 @@ const handler = {
         };
     },
     login: function(userEmail, userPassword, request, response) {
-        if(userEmail) {
+       checkthis.emailEntered(userEmail, function(response){
+           response.send("Incorrect password! <a href='/login'>Try Again<a>");
+       });
+        // if(userEmail) {
             if(userPassword) {
                 let foundEmail = false;
                 let foundPassword = false;
@@ -54,9 +57,9 @@ const handler = {
             } else {
                 response.send('missing password, Error: 400');//ideally we render a nice HTML error page
             };
-        } else {
-            response.send('missing email address, Error: 400');//ideally we render a nice HTML error page
-        };
+        // } else {
+        //     response.send('missing email address, Error: 400');//ideally we render a nice HTML error page
+        // };
     },
     userLink: function (url) {
         let niceLink = url.replace('http://', ''); //these lines help us avoid any troubles with users inputting less than perfect links
@@ -72,6 +75,22 @@ const handler = {
             };
         return personalLinks;
     }
+};
+
+const errors = {
+
+}
+
+const checkthis = {
+    emailEntered: function(credential, errorMessage) {
+        if(credential){
+            return;
+        } else {
+            errorMessage();
+        }
+    },
+    // userNameEntered: this.emailEntered(userEmail, errorMessage)
+
 };
 
 module.exports = handler;
