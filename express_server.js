@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const PORT = 5155;
+const PORT = 5150;
 const getRandomString = require('./generate_codes.js');
 const appData = require('./data-storage');
 const urlDatabase = appData.urlDatabase;
@@ -59,7 +59,7 @@ app.post('/login', function (request, response) {
 });
 
 app.post('/logout', function (request, response) {
-    response.clearCookie('user_id');
+    request.session.user_id = null;
     response.render('login');
 });
 
