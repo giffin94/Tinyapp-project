@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const PORT = 5150;
+const PORT = 7654;
 const getRandomString = require('./generate_codes.js');
 const appData = require('./data-storage');
 const urlDatabase = appData.urlDatabase;
@@ -20,7 +20,7 @@ app.use(cookieSession({
     maxAge: 24 * 60 * 60 * 1000 //24 hours
 }));
 
-app.get("/", (request, response) => {
+app.get("/", function (request, response) {
   checkThis.userActive(request, response);
   response.redirect('/urls');
 });
@@ -69,6 +69,7 @@ app.put("/urls", (request, response) => {
   urlDatabase[getRandomString()] = {
       link: request.body.longURL,
       userID: request.session.user_id,
+      visits: 0,
   };
   response.redirect(`/urls`)
 });
