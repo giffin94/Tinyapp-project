@@ -9,17 +9,16 @@ const handler = require('./handler');
 const checkThis = handler.checkThis;
 const bodyParser = require("body-parser");
 const cookieSession = require("cookie-session");
+const methodOverride = require('method-override');
 
+app.set('view engine', 'ejs');
+app.use(methodOverride('_method'));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieSession({
     name: 'session',
     keys: ['xkcd'],
     maxAge: 24 * 60 * 60 * 1000 //24 hours
 }));
-
-app.set('view engine', 'ejs');
-
-
 
 app.get("/", (request, response) => {
   checkThis.userActive(request, response);
@@ -40,7 +39,7 @@ app.get('/register', function (request, response) {
   response.render('user_registration');
 });
 
-app.post('/register', function (request, response) {
+app.put('/register', function (request, response) {
   handler.registration(request, response);
 });
 
@@ -48,13 +47,11 @@ app.get('/login', function (request, response) {
   response.render('login');
 });
 
-app.post('/login', function (request, response) {
-  // const userEmail = request.body.email;
-  // const userPassword = request.body.password;
+app.put('/login', function (request, response) {
   handler.login(request, response);
 });
 
-app.post('/logout', function (request, response) {
+app.put('/logout', function (request, response) {
   request.session.user_id = null;
   response.render('login');
 });
@@ -68,7 +65,7 @@ app.get('/urls/new', function (request, response) {
   response.render('urls_new', currentUser);
 });
 
-app.post("/urls", (request, response) => {
+app.put("/urls", (request, response) => {
   urlDatabase[getRandomString()] = {
       link: request.body.longURL,
       userID: request.session.user_id,
@@ -89,7 +86,7 @@ app.get('/urls/:id', (request, response) => {
   response.render("urls_show", currentUser);
 });
 
-app.post("/urls/:id/delete", (request, response) => {
+app.delete("/urls/:id/delete", (request, response) => {
   checkThis.userActive(request, response);
   checkThis.linkOwner(request, response); 
   let id = request.params.id;
@@ -97,7 +94,7 @@ app.post("/urls/:id/delete", (request, response) => {
   response.redirect('/urls');
 });
 
-app.post("/urls/:id/update", (request, response) => {
+app.put("/urls/:id/update", (request, response) => {
   checkThis.linkExists(request, response);
   checkThis.linkOwner(request, response);
   const currentUser = {

@@ -7,7 +7,7 @@
         <% if(ourUser) { %>       
             <% if(ourUser.id) { %>
                 <p>Logged in as: <%= ourUser.email %>
-                    <form action="/logout" method="post">
+                    <form action="/logout?_method=PUT" method="post">
                         <button>Logout</button>                    
                     </form>
                 </p>

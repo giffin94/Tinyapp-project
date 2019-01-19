@@ -13,10 +13,10 @@
             <% thisLink = (thisLink.replace('www.', '')) %>
             <li>
                 <p>Short URL: <%= url + ' '%>Full URL: <a href=<%= `https://www.${thisLink}` %>><%= urls[url] %></a>
-                    <form action="/urls/<%= url %>/delete" method="post">
+                    <form action="/urls/<%= url %>/delete?_method=DELETE" method="post">
                         <button>Delete Link</button>
                     </form>
-                    <form action='/urls/<%= url %>' method="get"'>
+                    <form action='/urls/<%= url %>' method="get">
                         <button>Edit</button>
                     </form>
                 </p>
