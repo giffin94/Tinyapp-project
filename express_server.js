@@ -21,12 +21,16 @@ app.use(cookieSession({
 }));
 
 app.get("/", function (request, response) {
-  checkThis.userActive(request, response);
+  checkThis.userActive(request, response, function(response) {
+        response.render('login');
+      }, response);
   response.redirect('/urls');
 });
 
 app.get('/urls', function (request, response) {
-  checkThis.userActive(request, response);
+  checkThis.userActive(request, response, function(response) {
+        response.send("You aren't logged in yet! Please login here:</p><a href='/login'>Login<a><br><a href=/register>Register Here.</a>")
+      }, response);
   let currentUser = {
       ourUser: userInfo[request.session.user_id],
       urls: handler.urlsForUser(String(request.session.user_id))
@@ -44,6 +48,7 @@ app.put('/register', function (request, response) {
 });
 
 app.get('/login', function (request, response) {
+  checkThis.userActiveReg(request, response);
   response.render('login');
 });
 
@@ -57,7 +62,9 @@ app.put('/logout', function (request, response) {
 });
 
 app.get('/urls/new', function (request, response) {
-  checkThis.userActive(request, response);
+  checkThis.userActive(request, response, function(response) {
+        response.render("login");
+      }, response);
   let currentUser = {
       ourUser: userInfo[request.session.user_id],
       urls: appData.urlDatabase,
@@ -66,17 +73,23 @@ app.get('/urls/new', function (request, response) {
 });
 
 app.put("/urls", (request, response) => {
-  urlDatabase[getRandomString()] = {
+  checkThis.userActive(request, response, function(response){
+    response.send("You aren't logged in yet! Please login here:</p><a href='/login'>Login<a><br><a href=/register>Register Here.</a>")
+  }, response);
+  let newLink = getRandomString();
+  urlDatabase[newLink] = {
       link: request.body.longURL,
       userID: request.session.user_id,
       visits: 0,
   };
-  response.redirect(`/urls`)
+  response.redirect(`/urls/${newLink}`)
 });
 
 app.get('/urls/:id', (request, response) => {
-  checkThis.userActive(request, response);
   checkThis.linkExists(request, response);
+  checkThis.userActive(request, response, function(response) {
+    response.send("You aren't logged in yet! Please login here:</p><a href='/login'>Login<a><br><a href=/register>Register Here.</a>")
+  }, response);
   checkThis.linkOwner(request, response);
   const currentUser = {
       ourUser: userInfo[request.session.user_id],
@@ -88,8 +101,10 @@ app.get('/urls/:id', (request, response) => {
 });
 
 app.delete("/urls/:id/delete", (request, response) => {
-  checkThis.userActive(request, response);
-  checkThis.linkOwner(request, response); 
+  checkThis.userActive(request, response, function(response) {
+        response.send("You aren't logged in yet! Please login here:</p><a href='/login'>Login<a><br><a href=/register>Register Here.</a>")
+      }, response);
+  checkThis.linkOwner(request, response);
   let id = request.params.id;
   delete urlDatabase[id];
   response.redirect('/urls');

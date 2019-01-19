@@ -59,10 +59,8 @@ const handler = {
           response.send("No password entered");
       }, response);
     },
-    userActive: function(request, response) {
-      this.emailEntered(userInfo[request.session.user_id], function(response) {
-        response.send("You aren't logged in yet! Please login here:</p><a href='/login'>Login<a><br><a href=/register>Register Here.</a>")
-      }, response);
+      userActive: function(request, response, correctError) {
+        this.emailEntered(userInfo[request.session.user_id], correctError, response);
     },
     linkOwner: function(request, response) {
       this.emailEntered((urlDatabase[request.params.id].userID === request.session.user_id), function(response) {
