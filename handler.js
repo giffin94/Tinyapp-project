@@ -7,7 +7,7 @@ const bcrypt = require('bcrypt');
 const handler = {
   registration: function(request, response) {
       this.checkThis.emailEntered(request.body.email, function(response){
-          response.send("No Email Entered!! <a href='/login'>Try Again<a>");
+          response.render('./errors/emailnotentered');
       }, response);
       this.checkThis.passwordEntered(request.body.password, response);
       for(var user in userInfo) {
@@ -17,14 +17,15 @@ const handler = {
   },
   login: function(request, response) {
     this.checkThis.emailEntered(request.body.email, function(response){
-      response.send("No Email found!! <a href='/login'>Try Again<a>");
+      response.render("No Email found!! <a href='/login'>Try Again<a>");
     }, response);
     this.checkThis.passwordEntered(request.body.password, response);
+    //now we have checked that both fields were filled, we check for a matching registered user
     var foundEmail = false;
     for(var user in userInfo) {
-      foundEmail = this.checkThis.userFound(userInfo[user].email, foundEmail, request.body.email);
+      foundEmail = this.checkThis.userFound(userInfo[user].email, foundEmail, request.body.email); //returns true when the matching email is found
       if(foundEmail) {
-        foundPassword = this.checkThis.passwordFound(userInfo[user].password, user, request, response);
+        this.checkThis.passwordFound(userInfo[user].password, user, request, response); //checks to see if the password is correct for the email address and redirects on success
       };
     };
     response.send('That Email not registered!')
