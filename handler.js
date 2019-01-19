@@ -17,7 +17,7 @@ const handler = {
   },
   login: function(request, response) {
     this.checkThis.emailEntered(request.body.email, function(response){
-      response.render("No Email found!! <a href='/login'>Try Again<a>");
+      response.render('<p>No Email found!! <a href="/login">Try Again<a></p>');
     }, response);
     this.checkThis.passwordEntered(request.body.password, response);
     //now we have checked that both fields were filled, we check for a matching registered user
@@ -28,7 +28,7 @@ const handler = {
         this.checkThis.passwordFound(userInfo[user].password, user, request, response); //checks to see if the password is correct for the email address and redirects on success
       };
     };
-    response.send('That Email not registered!')
+    response.send('<p>That Email not registered!<br><a href=/register>Register Here.</a></p>')
   },
   userLink: function (url) { //this function handles likely differences in the user input - expects at least domain.com (assumes http)
     let niceLink = url.replace('http://', '');
@@ -56,7 +56,7 @@ const handler = {
     },
     passwordEntered: function(userPassword, response) {
       this.emailEntered(userPassword, function(response){
-          response.send("No password entered");
+          response.send('<p>Please go back and enter a password!</p>');
       }, response);
     },
       userActive: function(request, response, correctError) {
@@ -64,12 +64,12 @@ const handler = {
     },
     linkOwner: function(request, response) {
       this.emailEntered((urlDatabase[request.params.id].userID === request.session.user_id), function(response) {
-        response.send(`You don't own this link! You can still use it though: <a href=${urlDatabase[request.params.id].link}>${request.params.id}</a>`)
+        response.send(`<p>You don't own this link! You can still use it though: <a href=${urlDatabase[request.params.id].link}>${request.params.id}</a></p>`)
       }, response);
     },
     linkExists: function(request, response) {
       this.emailEntered(urlDatabase[request.params.id], function(response) {
-        response.send('Uh oh! No Link associated with that ID.')
+        response.send('<p>Uh oh! No Link associated with that ID.</p>')
       }, response);
     },
     userActiveReg: function(request, response) {
@@ -79,7 +79,7 @@ const handler = {
     },
     emailRegistered: function(userEmail, request, response) {
       this.emailEntered(!(userEmail === request.body.email), function(response) {
-        response.send("<p>Email already registered! Error: 400</p>");
+        response.send('<p>Email already registered! Error: 400</p>');
       }, response);
     },
     userFound: function(info, found, reqEmail){
@@ -94,7 +94,7 @@ const handler = {
         request.session.user_id = user;
         response.redirect('/');
       } else {
-        response.send("Sorry incorrect password, try again");
+        response.send('<p>Sorry incorrect password, try again</p>');
       }
     }
   },

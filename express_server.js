@@ -7,8 +7,8 @@ const urlDatabase = appData.urlDatabase;
 const userInfo = appData.users;
 const handler = require('./handler');
 const checkThis = handler.checkThis;
-const bodyParser = require("body-parser");
-const cookieSession = require("cookie-session");
+const bodyParser = require('body-parser');
+const cookieSession = require('cookie-session');
 const methodOverride = require('method-override');
 
 app.set('view engine', 'ejs');
@@ -20,17 +20,17 @@ app.use(cookieSession({
     maxAge: 24 * 60 * 60 * 1000 //24 hours
 }));
 
-app.get("/", function (request, response) {
+app.get('/', function (request, response) {
   checkThis.userActive(request, response, function(response) {
         response.render('login');
-      }, response);
+      });
   response.redirect('/urls');
 });
 
 app.get('/urls', function (request, response) {
   checkThis.userActive(request, response, function(response) {
-        response.send("You aren't logged in yet! Please login here:</p><a href='/login'>Login<a><br><a href=/register>Register Here.</a>")
-      }, response);
+        response.send('<p>You aren`t logged in yet! Please login here: <a href="/login">Login<a><br><a href=/register>Register Here.</a></p>');
+      });
   let currentUser = {
       ourUser: userInfo[request.session.user_id],
       urls: handler.urlsForUser(String(request.session.user_id))
@@ -63,8 +63,8 @@ app.put('/logout', function (request, response) {
 
 app.get('/urls/new', function (request, response) {
   checkThis.userActive(request, response, function(response) {
-        response.render("login");
-      }, response);
+        response.render('login');
+      });
   let currentUser = {
       ourUser: userInfo[request.session.user_id],
       urls: appData.urlDatabase,
@@ -72,59 +72,59 @@ app.get('/urls/new', function (request, response) {
   response.render('urls_new', currentUser);
 });
 
-app.put("/urls", (request, response) => {
+app.put('/urls', (request, response) => {
   checkThis.userActive(request, response, function(response){
-    response.send("You aren't logged in yet! Please login here:</p><a href='/login'>Login<a><br><a href=/register>Register Here.</a>")
-  }, response);
+    response.send('<p>You aren`t logged in yet! Please login here:</p><a href="/login">Login<a><br><a href=/register>Register Here.</a>')
+  });
   let newLink = getRandomString();
   urlDatabase[newLink] = {
       link: request.body.longURL,
       userID: request.session.user_id,
       visits: 0,
   };
-  response.redirect(`/urls/${newLink}`)
+  response.redirect(`/urls/${newLink}`);
 });
 
 app.get('/urls/:id', (request, response) => {
   checkThis.linkExists(request, response);
   checkThis.userActive(request, response, function(response) {
-    response.send("You aren't logged in yet! Please login here:</p><a href='/login'>Login<a><br><a href=/register>Register Here.</a>")
-  }, response);
+    response.send('<p>You aren`t logged in yet! Please login here:</p><a href="/login">Login<a><br><a href=/register>Register Here.</a>');
+  });
   checkThis.linkOwner(request, response);
   const currentUser = {
       ourUser: userInfo[request.session.user_id],
       urls: handler.urlsForUser(String(request.session.user_id)),
       shortURL: request.params.id,
-      greeting: "Your short URL:"
+      greeting: 'Your short URL:'
   };
-  response.render("urls_show", currentUser);
+  response.render('urls_show', currentUser);
 });
 
-app.delete("/urls/:id/delete", (request, response) => {
+app.delete('/urls/:id/delete', (request, response) => {
   checkThis.userActive(request, response, function(response) {
-        response.send("You aren't logged in yet! Please login here:</p><a href='/login'>Login<a><br><a href=/register>Register Here.</a>")
-      }, response);
+        response.send('<p>You aren`t logged in yet! Please login here:</p><a href="/login">Login<a><br><a href=/register>Register Here.</a>')
+      });
   checkThis.linkOwner(request, response);
   let id = request.params.id;
   delete urlDatabase[id];
   response.redirect('/urls');
 });
 
-app.put("/urls/:id/update", (request, response) => {
+app.put('/urls/:id/update', (request, response) => {
   checkThis.linkExists(request, response);
   checkThis.linkOwner(request, response);
   const currentUser = {
     ourUser: userInfo[request.session.user_id],
     urls: appData.urlDatabase,
     shortURL: request.params.id,
-    greeting: "Your short URL:"
+    greeting: 'Your short URL:'
   };
   urlDatabase[currentUser.shortURL].link = request.body.longURL;
   urlDatabase[currentUser.shortURL].userID = currentUser.ourUser.id;
   response.redirect(`/urls`);
 });
 
-app.get("/urls.json", (request, response) => {
+app.get('/urls.json', (request, response) => {
     response.json(urlDatabase);
 });
 
