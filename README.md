@@ -4,11 +4,11 @@ TinyApp is a full stack web application built with Node and Express that allows 
 
 ## Final Product
 
-!["The Registration Page:"](#)
+!["The Registration Page:"](https://github.com/giffin94/Tinyapp-project/blob/master/docs/user-registration.png)
 
-!["URL Index for my personal links, showing the number of times the site was visited through TinyApp:"](#)
+!["URL Index for my personal links, showing the number of times the site was visited through TinyApp:"](https://github.com/giffin94/Tinyapp-project/blob/master/docs/USER-URLS.png)
 
-!["This page allows users to update existing links:"](#)
+!["This page allows users to update existing links:"](https://github.com/giffin94/Tinyapp-project/blob/master/docs/Update-A-Link.png)
 
 ## Dependencies
 
