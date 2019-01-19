@@ -16,11 +16,13 @@ const appData = {
     urlDatabase: {
         "b2xVn2": {
             link: "http://www.lighthouselabs.ca",
-            userID: '99999'
+            userID: '99999',
+            visits: 0,
         },
         "9sm5xK": {
             link: "http://www.google.com",
-            userID: '99999'
+            userID: '99999',
+            visits: 0,
         }
     }
 };

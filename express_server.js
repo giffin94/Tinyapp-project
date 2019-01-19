@@ -79,7 +79,7 @@ app.get('/urls/:id', (request, response) => {
   checkThis.linkOwner(request, response);
   const currentUser = {
       ourUser: userInfo[request.session.user_id],
-      urls: appData.urlDatabase,
+      urls: handler.urlsForUser(String(request.session.user_id)),
       shortURL: request.params.id,
       greeting: "Your short URL:"
   };
@@ -112,9 +112,10 @@ app.get("/urls.json", (request, response) => {
     response.json(urlDatabase);
 });
 
-app.get('/u/:shortURL', (request, response) => {
+app.get('/u/:id', (request, response) => {
     checkThis.linkExists(request, response);
-    const longURL = urlDatabase[request.params.shortURL].link;
+    appData.urlDatabase[request.params.id].visits += 1;
+    const longURL = urlDatabase[request.params.id].link;
     response.redirect(`http://www.${handler.userLink(longURL)}`);
 });
 

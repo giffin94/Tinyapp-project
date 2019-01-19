@@ -38,7 +38,9 @@ const handler = {
     let personalLinks = {};
     for(const url in urlDatabase) {
       if(urlDatabase[url].userID === id) {
-          personalLinks[url] = urlDatabase[url].link;
+          personalLinks[url] = {};
+          personalLinks[url].link = urlDatabase[url].link;
+          personalLinks[url].visits = urlDatabase[url].visits;
       };
     };
     return personalLinks;
