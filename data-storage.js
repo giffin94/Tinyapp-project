@@ -18,11 +18,13 @@ const appData = {
             link: "http://www.lighthouselabs.ca",
             userID: '99999',
             visits: 0,
+            creation: 'exampleDate'
         },
         "9sm5xK": {
             link: "http://www.google.com",
             userID: '99999',
             visits: 0,
+            creation: 'exampleDate'
         }
     }
 };

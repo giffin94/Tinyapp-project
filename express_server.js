@@ -10,6 +10,7 @@ const checkThis = handler.checkThis;
 const bodyParser = require('body-parser');
 const cookieSession = require('cookie-session');
 const methodOverride = require('method-override');
+const moment = require('moment');
 
 app.set('view engine', 'ejs');
 app.use(methodOverride('_method'));
@@ -81,6 +82,7 @@ app.put('/urls', (request, response) => {
       link: request.body.longURL,
       userID: request.session.user_id,
       visits: 0,
+      creation: moment().format('MMMM Do YYYY, h:mm:ss a'),
   };
   response.redirect(`/urls/${newLink}`);
 });

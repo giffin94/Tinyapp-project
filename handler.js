@@ -42,6 +42,7 @@ const handler = {
           personalLinks[url] = {};
           personalLinks[url].link = urlDatabase[url].link;
           personalLinks[url].visits = urlDatabase[url].visits;
+          personalLinks[url].creation = urlDatabase[url].creation;
       };
     };
     return personalLinks;
