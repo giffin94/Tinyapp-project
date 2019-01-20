@@ -16,6 +16,7 @@
             <input id="newURL" type="text" value="<%= urls[shortURL].link %>" name="longURL"> 
             <p>visits to this link: <%= urls[shortURL].visits %></p>
             <p>Date created: <%= urls[shortURL].creation %></p>
+            <p>Unique vistors: <%= urls[shortURL].uniqueVisits.length %></p>
             <button>Update URL!</button>                    
         </form>
     </p>
