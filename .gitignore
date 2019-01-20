@@ -82,3 +82,5 @@ typings/
 
 #vscode folder for debugging
 .vscode/
+
+#node modules
