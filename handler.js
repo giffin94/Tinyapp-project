@@ -37,59 +37,61 @@ const handler = {
   },
   urlsForUser: function(id) {
     let personalLinks = {};
-    for(const url in urlDatabase) {
-      if(urlDatabase[url].userID === id) {
+    for (const url in urlDatabase) {
+      if (urlDatabase[url].userID === id) {
           personalLinks[url] = {};
           personalLinks[url].link = urlDatabase[url].link;
           personalLinks[url].visits = urlDatabase[url].visits;
+          personalLinks[url].creation = urlDatabase[url].creation;
+          personalLinks[url].uniqueVisits = urlDatabase[url].uniqueVisits;
       };
     };
     return personalLinks;
   },
   checkThis: {
     emailEntered: function(credential, errorMessage, response) {
-      if(credential){
+      if (credential) {
           return;
       } else {
           errorMessage(response);
       }
     },
-    passwordEntered: function(userPassword, response) {
+    passwordEntered: function (userPassword, response) {
       this.emailEntered(userPassword, function(response){
           response.send('<p>Please go back and enter a password!</p>');
       }, response);
     },
-      userActive: function(request, response, correctError) {
+      userActive: function (request, response, correctError) {
         this.emailEntered(userInfo[request.session.user_id], correctError, response);
     },
-    linkOwner: function(request, response) {
+    linkOwner: function (request, response) {
       this.emailEntered((urlDatabase[request.params.id].userID === request.session.user_id), function(response) {
         response.send(`<p>You don't own this link! You can still use it though: <a href=${urlDatabase[request.params.id].link}>${request.params.id}</a></p>`)
       }, response);
     },
-    linkExists: function(request, response) {
+    linkExists: function (request, response) {
       this.emailEntered(urlDatabase[request.params.id], function(response) {
         response.send('<p>Uh oh! No Link associated with that ID.</p>')
       }, response);
     },
-    userActiveReg: function(request, response) {
+    userActiveReg: function (request, response) {
       this.emailEntered(!(userInfo[request.session.user_id]), function(response) {
         response.redirect('/urls');
       }, response);
     },
-    emailRegistered: function(userEmail, request, response) {
+    emailRegistered: function (userEmail, request, response) {
       this.emailEntered(!(userEmail === request.body.email), function(response) {
         response.send('<p>Email already registered! Error: 400</p>');
       }, response);
     },
-    userFound: function(info, found, reqEmail){
+    userFound: function (info, found, reqEmail){
       if(info === reqEmail) {
         return true;
       } else {
         return found;
       }
     },
-    passwordFound: function(info, user, request, response){
+    passwordFound: function (info, user, request, response){
       if(bcrypt.compareSync(request.body.password, info)) {
         request.session.user_id = user;
         response.redirect('/');
@@ -98,7 +100,7 @@ const handler = {
       }
     }
   },
-  registerUser: function(request, response, hashPass) {
+  registerUser: function (request, response, hashPass) {
     let userID = getRandomString();
     userInfo[userID] = {
       id: userID,
