@@ -14,17 +14,19 @@ const appData = {
     },
 
     urlDatabase: {
-        "b2xVn2": {
+        "example": {
             link: "http://www.lighthouselabs.ca",
             userID: '99999',
             visits: 0,
-            creation: 'exampleDate'
+            creation: 'exampleDate',
+            uniqueVisits: []
         },
         "9sm5xK": {
             link: "http://www.google.com",
             userID: '99999',
             visits: 0,
-            creation: 'exampleDate'
+            creation: 'exampleDate',
+            uniqueVisits: []
         }
     }
 };
