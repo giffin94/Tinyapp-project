@@ -1,10 +1,10 @@
 {
   "name": "tinyapp-project",
   "version": "1.0.0",
-  "description": "",
+  "description": "TinyApp is a full stack web application built with Node and Express that allows users to shorten long URL, similar to bit.ly or ow.ly etc.",
   "main": "index.js",
   "scripts": {
-    "start": "./node_modules/.bin/nodemon -L express_server.js",
+    "start": "nodemon -L express_server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -21,5 +21,16 @@
   "devDependencies": {
     "nodemon": "^1.18.9",
     "jslint": "^0.12.0"
-  }
+  },
+  "directories": {
+    "doc": "docs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/giffin94/Tinyapp-project.git"
+  },
+  "bugs": {
+    "url": "https://github.com/giffin94/Tinyapp-project/issues"
+  },
+  "homepage": "https://github.com/giffin94/Tinyapp-project#readme"
 }
