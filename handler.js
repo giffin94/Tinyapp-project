@@ -43,6 +43,7 @@ const handler = {
           personalLinks[url].link = urlDatabase[url].link;
           personalLinks[url].visits = urlDatabase[url].visits;
           personalLinks[url].creation = urlDatabase[url].creation;
+          personalLinks[url].uniqueVisits = urlDatabase[url].uniqueVisits;
       };
     };
     return personalLinks;

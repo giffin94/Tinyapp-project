@@ -14,7 +14,7 @@ const appData = {
     },
 
     urlDatabase: {
-        "example": {
+        "b2xVn2": {
             link: "http://www.lighthouselabs.ca",
             userID: '99999',
             visits: 0,

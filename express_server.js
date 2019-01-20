@@ -83,6 +83,7 @@ app.put('/urls', (request, response) => {
       userID: request.session.user_id,
       visits: 0,
       creation: moment().format('MMMM Do YYYY, h:mm:ss a'),
+      uniqueVisits: []
   };
   response.redirect(`/urls/${newLink}`);
 });
@@ -133,6 +134,9 @@ app.get('/urls.json', (request, response) => {
 app.get('/u/:id', (request, response) => {
     checkThis.linkExists(request, response);
     appData.urlDatabase[request.params.id].visits += 1;
+    if(appData.urlDatabase[request.params.id].uniqueVisits.indexOf(request.session.user_id) === -1){
+      appData.urlDatabase[request.params.id].uniqueVisits.push(request.session.user_id);
+    }
     const longURL = urlDatabase[request.params.id].link;
     response.redirect(`http://www.${handler.userLink(longURL)}`);
 });
